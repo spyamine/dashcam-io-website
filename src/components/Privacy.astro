@@ -1,0 +1,130 @@
+---
+---
+
+<section class="privacy section" id="privacy">
+  <div class="wrap">
+    <div class="card">
+      <div class="copy">
+        <span class="kicker">Privacy by default</span>
+        <h2>What's recorded on your phone stays on your phone.</h2>
+        <p>
+          Dashcam.io is designed so that you never have to trust a server with
+          your driving footage. Video lives in the app's private storage.
+          Object detection runs on-device with MediaPipe. AI trip summaries run
+          on-device with Gemma 3. The only time a clip leaves the device is
+          when you explicitly tap <strong>Share</strong>, or when a crash
+          auto-upload fires on a premium plan — and even then, uploads go
+          through a per-user signed URL with a 7-day expiry.
+        </p>
+        <ul class="checks">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+            Video never leaves the device by default
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+            Object detection runs 100% offline
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+            AI summaries run on the phone, not in the cloud
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+            No tracking, no third-party analytics on the web
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .privacy {
+    background: var(--color-bg);
+  }
+
+  .card {
+    background: linear-gradient(165deg, #ffffff 0%, #f8fcfc 100%);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 64px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(0, 199, 190, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .copy {
+    max-width: 680px;
+    position: relative;
+  }
+
+  .kicker {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-primary-dark);
+    margin-bottom: 14px;
+  }
+
+  h2 {
+    margin-bottom: 18px;
+  }
+
+  p {
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 32px;
+  }
+
+  p strong {
+    color: var(--color-text);
+  }
+
+  .checks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px 24px;
+  }
+
+  .checks li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .checks svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    padding: 4px;
+    background: var(--color-primary);
+    color: #fff;
+    border-radius: 50%;
+  }
+
+  @media (max-width: 640px) {
+    .card {
+      padding: 40px 28px;
+    }
+  }
+</style>

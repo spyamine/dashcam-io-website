@@ -3,4 +3,13 @@
 *.swo
 .idea/
 .vscode/
+
+# Astro
+.astro/
+dist/
 node_modules/
+
+# Env
+.env
+.env.*
+!.env.example

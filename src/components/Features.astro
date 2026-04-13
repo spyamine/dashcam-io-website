@@ -1,0 +1,175 @@
+---
+interface Feature {
+  icon: string;
+  title: string;
+  body: string;
+}
+
+const features: Feature[] = [
+  {
+    icon: 'loop',
+    title: 'Loop recording',
+    body: 'Continuous 2-minute segments with FIFO deletion. Configure 8, 16, or 32 GB — never runs out of storage mid-drive.',
+  },
+  {
+    icon: 'crash',
+    title: 'Crash detection',
+    body: 'Accelerometer-based impact detection locks the relevant clip so the fallback rotation never overwrites it.',
+  },
+  {
+    icon: 'ai',
+    title: 'On-device object detection',
+    body: 'Cars, trucks, pedestrians, cyclists, traffic signs — identified and tracked on the phone. Nothing leaves the device.',
+  },
+  {
+    icon: 'score',
+    title: 'Safety score per trip',
+    body: 'Speed behavior, harsh braking, crash events — rolled into a trip-level score you can actually act on.',
+  },
+  {
+    icon: 'summary',
+    title: 'AI trip summaries',
+    body: 'Gemma 3 1B runs entirely on the phone. Natural-language recap of every drive, no cloud round-trip.',
+  },
+  {
+    icon: 'car',
+    title: 'Android Auto',
+    body: 'See live speed, recording status, and trip history on the head unit. Your phone stays mounted and protected.',
+  },
+  {
+    icon: 'privacy',
+    title: 'Your data stays yours',
+    body: 'Video is stored locally by default. Cloud sync is premium and opt-in, backed by real signed URLs with 7-day expiry.',
+  },
+  {
+    icon: 'free',
+    title: 'No subscription to record',
+    body: 'Recording, detection, crash lock, safety score — all free. Premium only unlocks cloud sync and AI summaries.',
+  },
+];
+---
+
+<section class="features section" id="features">
+  <div class="wrap">
+    <header class="section-head">
+      <span class="kicker">What it does</span>
+      <h2>A full dashcam, reinvented for the device in your pocket.</h2>
+      <p>No extra hardware, no SD card, no new app store to install through.</p>
+    </header>
+
+    <div class="grid">
+      {features.map((f) => (
+        <article class="card">
+          <div class="icon-wrap" aria-hidden="true">
+            {f.icon === 'loop' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.5v-2a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.5v2a4 4 0 0 1-4 4H3"/></svg>
+            )}
+            {f.icon === 'crash' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="m16 6-4 4-4-4"/><path d="M19 10a7 7 0 1 1-14 0"/><path d="M12 22v-4"/></svg>
+            )}
+            {f.icon === 'ai' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="8" y="8" width="8" height="8" rx="1"/><path d="M3 9h2M3 15h2M19 9h2M19 15h2M9 3v2M15 3v2M9 19v2M15 19v2"/></svg>
+            )}
+            {f.icon === 'score' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 9.4 8 10 4.5-.6 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+            )}
+            {f.icon === 'summary' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4 4 4 0 0 0-4 4 4 4 0 0 0 2 3.5V18a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4.5A4 4 0 0 0 20 10a4 4 0 0 0-4-4 4 4 0 0 0-4-4z"/><path d="M8 18v2M16 18v2"/></svg>
+            )}
+            {f.icon === 'car' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2l-1.5-6.2A2 2 0 0 0 17.6 9H6.4a2 2 0 0 0-1.9 1.8L3 17h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17h14"/></svg>
+            )}
+            {f.icon === 'privacy' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            )}
+            {f.icon === 'free' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+            )}
+          </div>
+          <h3>{f.title}</h3>
+          <p>{f.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .features {
+    background: var(--color-bg);
+  }
+
+  .section-head {
+    max-width: 720px;
+    margin: 0 auto 56px;
+    text-align: center;
+  }
+
+  .kicker {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-primary-dark);
+    margin-bottom: 14px;
+  }
+
+  .section-head h2 {
+    margin-bottom: 12px;
+  }
+
+  .section-head p {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 28px 24px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary-light);
+    box-shadow: var(--shadow-card);
+  }
+
+  .icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 16px rgba(0, 199, 190, 0.3);
+  }
+
+  .icon-wrap svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .card h3 {
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+  }
+
+  .card p {
+    color: var(--color-text-muted);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+</style>
