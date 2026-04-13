@@ -1,0 +1,35 @@
+# dashcam.byteflowers.com — static site for Android App Links + landing
+#
+# NOTE: HTTPS redirect is intentionally OMITTED here.
+# At deploy time the vhost is serving a self-signed cert (no AutoSSL / Let's
+# Encrypt provisioned yet). Forcing HTTPS would break the site for everyone
+# until a publicly-trusted cert is installed via cPanel. Re-enable the rules
+# below once AutoSSL or the Let's Encrypt cPanel plugin issues a cert.
+#
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTPS} !=on
+#   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
+
+# Critical: serve assetlinks.json with the right MIME type.
+# Google's Digital Asset Links verifier rejects anything that isn't application/json.
+AddType application/json .json
+
+# Short-TTL cache for the asset links file so we can fix mistakes fast.
+<IfModule mod_headers.c>
+  <FilesMatch "^assetlinks\.json$">
+    Header set Cache-Control "public, max-age=300"
+    Header set Content-Type "application/json"
+  </FilesMatch>
+</IfModule>
+
+# Default index files
+DirectoryIndex index.html
+
+# Disable directory listings
+Options -Indexes
+
+# TODO (release builds): append the Play-signed release SHA-256 fingerprint
+# to .well-known/assetlinks.json -> sha256_cert_fingerprints. The current
+# entry is the local debug keystore only.

@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "io.dashcam.android",
+    "sha256_cert_fingerprints": [
+      "BF:BB:59:51:42:F7:DB:B4:42:C3:D7:0F:B7:AC:4F:41:EB:A3:5D:1A:6C:21:F9:4E:0B:9D:C9:09:14:E9:85:19"
+    ]
+  }
+}]

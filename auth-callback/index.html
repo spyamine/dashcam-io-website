@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#00C7BE">
+  <title>Email confirmed — Dashcam.io</title>
+  <meta name="robots" content="noindex">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #F2F2F7;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    }
+    .check {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #00C7BE;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .check svg { width: 32px; height: 32px; }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+    p {
+      font-size: 16px;
+      color: #3C3C43;
+      margin: 0 0 28px;
+      line-height: 1.5;
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px 24px;
+      background: #00C7BE;
+      color: #FFFFFF;
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 120ms ease;
+    }
+    .btn:hover, .btn:focus { background: #00A89F; }
+    .btn:active { background: #00A89F; transform: scale(0.99); }
+    .hint {
+      font-size: 13px;
+      color: #8E8E93;
+      margin-top: 20px;
+    }
+    .error {
+      background: #F2F2F7;
+      color: #8E8E93;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="check" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <h1 id="title">Email confirmed</h1>
+    <p id="message">You're all set. Open the Dashcam.io app to sign in.</p>
+    <div id="errorBox" class="error hidden"></div>
+    <a id="openBtn" class="btn" href="#">Open the app</a>
+    <p class="hint">If nothing happens, make sure the Dashcam.io app is installed on this device.</p>
+  </main>
+  <script>
+    (function () {
+      var hash = window.location.hash || '';
+      var search = window.location.search || '';
+
+      // Detect Supabase tokens in fragment (#access_token=...&type=signup)
+      // or in query string (?type=signup&token_hash=... — PKCE flow)
+      var hasFragmentTokens = hash.indexOf('access_token=') !== -1 || hash.indexOf('type=') !== -1;
+      var hasPkceTokens = search.indexOf('token_hash=') !== -1 || search.indexOf('type=') !== -1;
+      var hasError = hash.indexOf('error') !== -1 || search.indexOf('error') !== -1;
+
+      var titleEl = document.getElementById('title');
+      var messageEl = document.getElementById('message');
+      var errorBox = document.getElementById('errorBox');
+      var openBtn = document.getElementById('openBtn');
+
+      if (hasError) {
+        // Try to surface the human-readable bit
+        var combined = (hash + '&' + search.replace(/^\?/, '')).replace(/^#/, '');
+        var params = new URLSearchParams(combined);
+        var desc = params.get('error_description') || params.get('error') || 'Verification link is invalid or has expired.';
+        titleEl.textContent = 'Verification problem';
+        messageEl.textContent = 'We could not confirm this link.';
+        errorBox.textContent = decodeURIComponent(desc.replace(/\+/g, ' '));
+        errorBox.classList.remove('hidden');
+      } else if (!hasFragmentTokens && !hasPkceTokens) {
+        // No tokens at all — generic landing
+        titleEl.textContent = 'Open Dashcam.io';
+        messageEl.textContent = 'Tap the button below to open the app.';
+      }
+
+      // Build the custom-scheme fallback URL.
+      // Forward the entire fragment + query so the app can re-parse Supabase tokens.
+      var appUrl = 'io.dashcam.android://auth-callback';
+      if (hash) appUrl += hash;
+      if (search) {
+        // Append search as part of the fragment so it survives the scheme handoff
+        appUrl += (hash ? '&' : '#') + search.replace(/^\?/, '');
+      }
+      openBtn.setAttribute('href', appUrl);
+
+      // Auto-attempt deep link once on load (only if we have tokens and no error)
+      if ((hasFragmentTokens || hasPkceTokens) && !hasError) {
+        // Defer slightly so the page paints first
+        setTimeout(function () {
+          window.location.href = appUrl;
+        }, 250);
+      }
+    })();
+  </script>
+</body>
+</html>
