@@ -1,0 +1,557 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Watch Live — Dashcam.io"
+  description="Watch a live stream from your Dashcam.io phone in real time."
+>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a href="/" class="brand" aria-label="Dashcam.io home">
+        <img src="/icon-round.png" alt="" width="36" height="36" class="brand-icon" />
+        <span class="brand-name">Dashcam.io</span>
+      </a>
+      <button id="signOutBtn" class="signout hidden" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="wrap">
+      <!-- ── LOGIN VIEW ────────────────────────────────────────────── -->
+      <section id="loginView" class="card">
+        <h1>Watch a live stream</h1>
+        <p class="muted">
+          Sign in with the same account you use in the Dashcam.io app on your phone.
+        </p>
+        <form id="loginForm" novalidate>
+          <label class="field">
+            <span class="field-label">Email</span>
+            <input
+              type="email"
+              id="email"
+              required
+              autocomplete="email"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
+              placeholder="you@example.com"
+            />
+          </label>
+          <label class="field">
+            <span class="field-label">Password</span>
+            <input
+              type="password"
+              id="password"
+              required
+              autocomplete="current-password"
+              placeholder="••••••••"
+            />
+          </label>
+          <button type="submit" id="loginBtn" class="btn btn-primary">Sign in</button>
+          <p id="loginError" class="error hidden" role="alert"></p>
+        </form>
+      </section>
+
+      <!-- ── PICKER VIEW (enter Stream ID) ─────────────────────────── -->
+      <section id="pickerView" class="card hidden">
+        <h1>Enter a Stream ID</h1>
+        <p class="muted">
+          On the publishing phone, start recording in the Dashcam.io app, tap
+          <strong>Go Live</strong>, then tap the <strong>LIVE</strong> pill to copy
+          the Stream ID. Paste it here.
+        </p>
+        <label class="field">
+          <span class="field-label">Stream ID</span>
+          <input
+            type="text"
+            id="streamId"
+            placeholder="e.g. 9f2c1d…"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+          />
+        </label>
+        <button id="watchBtn" class="btn btn-primary" type="button">Watch</button>
+        <p id="pickerError" class="error hidden" role="alert"></p>
+        <p class="signed-in muted" id="signedInAs"></p>
+      </section>
+
+      <!-- ── LIVE VIEW ─────────────────────────────────────────────── -->
+      <section id="liveView" class="live hidden">
+        <div class="viewer">
+          <img id="frame" alt="Live video stream" />
+          <div class="overlay-top">
+            <button id="backBtn" class="back" type="button" aria-label="Back">
+              ← Back
+            </button>
+            <span class="live-badge" id="liveBadge">
+              <span class="live-dot"></span>LIVE
+            </span>
+          </div>
+          <div class="status" id="liveStatus">Connecting…</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+    backdrop-filter: saturate(180%) blur(18px);
+    -webkit-backdrop-filter: saturate(180%) blur(18px);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-text);
+    font-weight: 700;
+  }
+  .brand:hover { color: var(--color-text); }
+  .brand-icon { box-shadow: 0 2px 10px rgba(0, 199, 190, 0.22); }
+  .brand-name { font-size: 17px; }
+
+  .signout {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .signout:hover {
+    color: var(--color-text);
+    border-color: var(--color-primary);
+  }
+
+  .page {
+    min-height: calc(100vh - 64px);
+    padding: 48px 0 96px;
+  }
+
+  .card {
+    max-width: 460px;
+    margin: 0 auto;
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    box-shadow: var(--shadow-card);
+  }
+  .card h1 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+  .muted {
+    color: var(--color-text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+
+  .field {
+    display: block;
+    margin-bottom: 14px;
+  }
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-card);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: 16px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 199, 190, 0.18);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px 20px;
+    margin-top: 8px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 199, 190, 0.35);
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-primary-dark);
+    transform: translateY(-1px);
+  }
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .error {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 59, 48, 0.08);
+    color: var(--color-red);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .signed-in {
+    margin-top: 18px;
+    margin-bottom: 0;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .hidden { display: none !important; }
+
+  /* ── Live viewer ───────────────────────────────────────────────── */
+  .live {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .viewer {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-hero);
+  }
+  .viewer img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+  }
+  .overlay-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    pointer-events: none;
+  }
+  .overlay-top > * { pointer-events: auto; }
+
+  .back {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .back:hover { background: rgba(0, 0, 0, 0.7); }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-red);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+  }
+  .live-badge.on { opacity: 1; }
+  .live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    animation: pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 15px;
+    font-weight: 500;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  .status:empty { display: none; }
+
+  @media (max-width: 640px) {
+    .page { padding: 32px 0 64px; }
+    .card { padding: 24px; }
+    .card h1 { font-size: 1.4rem; }
+    .topbar-inner { padding: 12px 16px; }
+  }
+</style>
+
+<script is:inline type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
+  import { Room, RoomEvent } from 'https://esm.sh/livekit-client@2.5.10';
+
+  const SUPABASE_URL = 'https://cwaoqufpxddmiippyyjy.supabase.co';
+  const SUPABASE_ANON_KEY =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3YW9xdWZweGRkbWlpcHB5eWp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODk4NTQsImV4cCI6MjA5MTY2NTg1NH0.Qh66CKAwDx85G8sqEBJ-fA1ddlmiMqUT30g36JRO5LQ';
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  });
+
+  // ── DOM refs ─────────────────────────────────────────────────────
+  const $ = (id) => document.getElementById(id);
+  const loginView = $('loginView');
+  const pickerView = $('pickerView');
+  const liveView = $('liveView');
+  const loginForm = $('loginForm');
+  const emailInput = $('email');
+  const passwordInput = $('password');
+  const loginBtn = $('loginBtn');
+  const loginError = $('loginError');
+  const streamIdInput = $('streamId');
+  const watchBtn = $('watchBtn');
+  const pickerError = $('pickerError');
+  const signedInAs = $('signedInAs');
+  const signOutBtn = $('signOutBtn');
+  const frameImg = $('frame');
+  const liveStatus = $('liveStatus');
+  const liveBadge = $('liveBadge');
+  const backBtn = $('backBtn');
+
+  // ── State ────────────────────────────────────────────────────────
+  let room = null;
+  let prevFrameUrl = null;
+  let lastFrameAt = 0;
+  let waitingTimer = null;
+
+  // ── View switching ───────────────────────────────────────────────
+  function show(view) {
+    loginView.classList.toggle('hidden', view !== 'login');
+    pickerView.classList.toggle('hidden', view !== 'picker');
+    liveView.classList.toggle('hidden', view !== 'live');
+    signOutBtn.classList.toggle('hidden', view === 'login');
+  }
+
+  function setStatus(s) {
+    liveStatus.textContent = s || '';
+  }
+
+  // ── Boot: restore session ────────────────────────────────────────
+  (async () => {
+    const { data } = await supabase.auth.getSession();
+    if (data?.session) {
+      signedInAs.textContent = `Signed in as ${data.session.user.email}`;
+      // Allow ?stream=<id> in URL to auto-fill
+      const params = new URLSearchParams(window.location.search);
+      const preset = params.get('stream');
+      if (preset) streamIdInput.value = preset;
+      show('picker');
+    } else {
+      show('login');
+    }
+  })();
+
+  // ── Sign in ──────────────────────────────────────────────────────
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.classList.add('hidden');
+    loginError.textContent = '';
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Signing in…';
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value.trim(),
+      password: passwordInput.value,
+    });
+
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Sign in';
+
+    if (error) {
+      loginError.textContent = error.message || 'Sign in failed';
+      loginError.classList.remove('hidden');
+      return;
+    }
+
+    signedInAs.textContent = `Signed in as ${data.user.email}`;
+    show('picker');
+  });
+
+  // ── Sign out ─────────────────────────────────────────────────────
+  signOutBtn.addEventListener('click', async () => {
+    await disconnectStream();
+    await supabase.auth.signOut();
+    emailInput.value = '';
+    passwordInput.value = '';
+    streamIdInput.value = '';
+    show('login');
+  });
+
+  // ── Watch ────────────────────────────────────────────────────────
+  watchBtn.addEventListener('click', async () => {
+    pickerError.classList.add('hidden');
+    pickerError.textContent = '';
+    const id = streamIdInput.value.trim();
+    if (!id) {
+      pickerError.textContent = 'Enter a Stream ID first.';
+      pickerError.classList.remove('hidden');
+      return;
+    }
+
+    watchBtn.disabled = true;
+    watchBtn.textContent = 'Connecting…';
+
+    try {
+      const { data, error } = await supabase.functions.invoke('mint-livekit-token', {
+        body: { role: 'subscriber', deviceId: id },
+      });
+      if (error) throw new Error(error.message || 'Token request failed');
+      if (!data || !data.token || !data.url) {
+        throw new Error('Server returned no token. Check that the Stream ID is correct.');
+      }
+
+      show('live');
+      setStatus('Connecting…');
+      liveBadge.classList.remove('on');
+
+      room = new Room();
+      room.on(RoomEvent.DataReceived, onDataReceived);
+      room.on(RoomEvent.Disconnected, () => {
+        setStatus('Disconnected');
+        liveBadge.classList.remove('on');
+      });
+      room.on(RoomEvent.ConnectionStateChanged, (state) => {
+        if (state === 'connected' && !lastFrameAt) {
+          setStatus('Waiting for stream to start…');
+        }
+      });
+
+      await room.connect(data.url, data.token);
+      setStatus('Waiting for stream to start…');
+
+      // If no frames arrive within 12s, surface a hint
+      waitingTimer = setTimeout(() => {
+        if (!lastFrameAt) {
+          setStatus(
+            'No frames yet. Make sure the phone is recording and "Go Live" is on.'
+          );
+        }
+      }, 12000);
+    } catch (err) {
+      pickerError.textContent = err.message || 'Failed to connect';
+      pickerError.classList.remove('hidden');
+      show('picker');
+      await disconnectStream();
+    } finally {
+      watchBtn.disabled = false;
+      watchBtn.textContent = 'Watch';
+    }
+  });
+
+  function onDataReceived(payload) {
+    // payload is a Uint8Array — wrap as JPEG blob and update <img>
+    try {
+      const blob = new Blob([payload], { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      if (prevFrameUrl) URL.revokeObjectURL(prevFrameUrl);
+      prevFrameUrl = url;
+      frameImg.src = url;
+      lastFrameAt = Date.now();
+      setStatus('');
+      liveBadge.classList.add('on');
+      if (waitingTimer) {
+        clearTimeout(waitingTimer);
+        waitingTimer = null;
+      }
+    } catch (e) {
+      console.warn('frame decode failed', e);
+    }
+  }
+
+  backBtn.addEventListener('click', async () => {
+    await disconnectStream();
+    show('picker');
+  });
+
+  async function disconnectStream() {
+    if (waitingTimer) {
+      clearTimeout(waitingTimer);
+      waitingTimer = null;
+    }
+    if (room) {
+      try {
+        await room.disconnect();
+      } catch (_) {
+        /* ignore */
+      }
+      room = null;
+    }
+    if (prevFrameUrl) {
+      URL.revokeObjectURL(prevFrameUrl);
+      prevFrameUrl = null;
+    }
+    frameImg.removeAttribute('src');
+    lastFrameAt = 0;
+    liveBadge.classList.remove('on');
+  }
+
+  // Clean up on page unload
+  window.addEventListener('beforeunload', () => {
+    if (room) {
+      try { room.disconnect(); } catch (_) {}
+    }
+  });
+</script>
